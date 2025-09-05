@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatsApp Bot</title>
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;" /> -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1><i class="fab fa-whatsapp"></i> WhatsApp Bot</h1>
+    
+    <div class="connection-status" id="connectionStatus">
+      <div class="spinner"></div>
+      <span>Conectando con WhatsApp...</span>
+    </div>
+
+    <!-- QR Container -->
+    <div class="card" id="qrContainer">
+      <div class="qr-container">
+        <h2><i class="fas fa-qrcode"></i> Escanea el código QR</h2>
+        <p>Para iniciar sesión, abre WhatsApp en tu teléfono, ve a Menú > Dispositivos vinculados > Vincular un dispositivo y escanea este código QR.</p>
+        <img id="qrcode" alt="QR Code" />
+        <p id="qrStatus">Esperando código QR...</p>
+      </div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="card hidden" id="formContainer">
+      <h2><i class="fas fa-paper-plane"></i> Enviar mensajes masivos</h2>
+      
+      <div class="form-group">
+        <label for="fileInput">Seleccionar archivo Excel:</label>
+        <div class="file-input-container">
+          <input type="file" id="fileInput" accept=".xlsx, .xls" class="file-input" required />
+        </div>
+        <small>Solo se aceptan archivos Excel (.xlsx, .xls)</small>
+      </div>
+
+      <div class="template-guide">
+        <h3><i class="fas fa-info-circle"></i> Formato requerido:</h3>
+        <p>El archivo Excel debe contener las siguientes columnas:</p>
+        <table class="template-table">
+          <thead>
+            <tr>
+              <th>celular</th>
+              <th>mensaje</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>51987654321</td>
+              <td>Hola {nombre}, este es un mensaje personalizado</td>
+            </tr>
+            <tr>
+              <td>51912345678</td>
+              <td>Recordatorio de su cita para mañana</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="summary" class="summary"></div>
+
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressBar"></div>
+        </div>
+        <div class="progress-text">
+          <span id="progressStatus">Esperando envío...</span>
+          <span id="progressPercentage">0%</span>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button id="sendButton" class="btn" disabled>
+          <i class="fas fa-paper-plane"></i> Iniciar envío
+        </button>
+        <button id="pauseButton" class="btn btn-warning hidden">
+          <i class="fas fa-pause"></i> Pausar
+        </button>
+        <button id="resetButton" class="btn btn-danger">
+          <i class="fas fa-redo"></i> Reiniciar
+        </button>
+      </div>
+
+      <h3>Registro de actividad:</h3>
+      <div class="logs-container" id="logsContainer"></div>
+    </div>
+  </div>
+
+  <script src="libraries/xlsx.full.min.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
