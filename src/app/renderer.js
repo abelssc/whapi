@@ -51,11 +51,33 @@ document.addEventListener("DOMContentLoaded", () => {
   //   connectionStatus.innerHTML = '<span class="status-indicator status-disconnected"></span> Error de conexión';
   //   connectionStatus.style.backgroundColor = '#ffeef0';
   // });
+  // Reseteear Excel subido
+
+  fileInput.addEventListener('click', () => {
+    fileInput.value = '';
+  });
 
   // Leer Excel
   fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    //resetear estado
+    clientes = [];
+    summary.textContent = '';
+    sendButton.disabled = true;
+    progressBar.style.width = '0%';
+    progressPercentage.textContent = '0%';
+    progressStatus.textContent = '';
+    logsContainer.innerHTML = '';
+    currentIndex = 0;
+    successCount = 0;
+    errorCount = 0;
+    isSending = false;
+    isPaused = false;
+    pauseButton.classList.add('hidden');
+    pauseButton.innerHTML = '<i class="fas fa-pause"></i> Pausar';
+    
 
     addLog(`Procesando archivo: ${file.name}`, 'info');
     
