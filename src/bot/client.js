@@ -1,26 +1,75 @@
 const { Client, LocalAuth } = require("whatsapp-web.js");
-const path = require('node:path')
+const puppeteer = require('puppeteer-core');
+const electron = require('electron');
 
+const os = require("os");
+const fs = require("fs");
+const path = require("path");
+
+require(path.join(__dirname,"../utils/logger")); // activa el logger
+
+const storagePath = path.join(os.homedir(), ".whatsapp-bot");
 let client;
 
-function initBot(sendQRCallback, readyCallback) {
-  client = new Client({
-    authStrategy: new LocalAuth({ 
-      dataPath: path.join(__dirname, "storage") 
-    }),
-  });
-
-  client.on("qr", (qr) => {
-    // Mandar el QR al frontend
-    sendQRCallback(qr);
-  });
-
-  client.on("ready", () => {
-    readyCallback("✅ WhatsApp listo para enviar mensajes");
-  });
-
-  client.initialize();
+if (!fs.existsSync(storagePath)) {
+  fs.mkdirSync(storagePath, { recursive: true });
 }
+
+function initBot(sendQRCallback, readyCallback) {
+  try {
+    console.log("Starting bot...");
+
+    const storagePath = path.join(os.homedir(), ".whatsapp-bot");
+
+    if (!fs.existsSync(storagePath)) {
+      fs.mkdirSync(storagePath, { recursive: true });
+    }
+
+    client = new Client({
+      authStrategy: new LocalAuth({
+        dataPath: storagePath,
+      }),
+      puppeteer: {
+        headless: true, // 👀 ponlo en false para ver si abre el navegador
+        executablePath: puppeteer.executablePath().replace('app.asar', 'app.asar.unpacked'),
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-accelerated-2d-canvas",
+          "--no-first-run",
+          "--no-zygote",
+          "--disable-gpu"
+        ],
+      },
+    });
+
+    console.log("Client created");
+    console.log("Usando Chromium:", client.options.puppeteer.executablePath);
+
+    client.on("qr", (qr) => {
+      console.log("📲 QR recibido");
+      sendQRCallback(qr);
+    });
+
+    client.on("authenticated", () => {
+      console.log("🔐 Autenticado correctamente");
+    });
+
+    client.on("auth_failure", (msg) => {
+      console.error("❌ Error de autenticación:", msg);
+    });
+
+    client.on("ready", () => {
+      readyCallback("✅ WhatsApp listo para enviar mensajes");
+    });
+
+    client.initialize();
+  } catch (error) {
+    console.error("Error initializing bot:", error);
+  }
+}
+
 
 async function sendMessage(number, message) {
   try {

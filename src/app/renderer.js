@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("Renderer process loaded");
+  
   // Elementos DOM
   const qrContainer = document.getElementById('qrContainer');
   const formContainer = document.getElementById('formContainer');
@@ -22,6 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentIndex = 0;
   let successCount = 0;
   let errorCount = 0;
+  console.log(" Elementos DOM y variables de estado inicializados");
+  
 
   // Inicializar bot
   window.ApiElectron.initBot();
